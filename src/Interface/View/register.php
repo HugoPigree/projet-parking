@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion - Parking Partagé</title>
+    <title>Inscription - Parking Partagé</title>
     <style>
         * {
             margin: 0;
@@ -21,13 +21,13 @@
             padding: 20px;
         }
 
-        .login-container {
+        .register-container {
             background: rgba(255, 255, 255, 0.95);
             padding: 40px;
             border-radius: 16px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             width: 100%;
-            max-width: 420px;
+            max-width: 480px;
         }
 
         .logo {
@@ -51,6 +51,15 @@
             margin-top: 5px;
         }
 
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
         .form-group {
             margin-bottom: 20px;
         }
@@ -63,19 +72,64 @@
             font-size: 14px;
         }
 
-        .form-group input {
+        .form-group input,
+        .form-group select {
             width: 100%;
             padding: 14px 16px;
             border: 2px solid #e0e0e0;
             border-radius: 8px;
             font-size: 16px;
             transition: border-color 0.3s, box-shadow 0.3s;
+            background: white;
         }
 
-        .form-group input:focus {
+        .form-group input:focus,
+        .form-group select:focus {
             outline: none;
             border-color: #0f3460;
             box-shadow: 0 0 0 3px rgba(15, 52, 96, 0.1);
+        }
+
+        .role-selector {
+            display: flex;
+            gap: 10px;
+        }
+
+        .role-option {
+            flex: 1;
+            position: relative;
+        }
+
+        .role-option input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .role-option label {
+            display: block;
+            padding: 15px;
+            text-align: center;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .role-option input:checked + label {
+            border-color: #0f3460;
+            background: rgba(15, 52, 96, 0.05);
+        }
+
+        .role-option label .icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .role-option label .text {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
         }
 
         .btn {
@@ -140,18 +194,36 @@
             text-decoration: underline;
             color: #e94560;
         }
+
+        .password-hint {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
-    <div class="login-container">
+    <div class="register-container">
         <div class="logo">
             <h1>Parking<span>Partagé</span></h1>
-            <p>Connectez-vous à votre compte</p>
+            <p>Créez votre compte</p>
         </div>
 
         <div id="message" class="message"></div>
 
-        <form id="loginForm">
+        <form id="registerForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="prenom">Prénom</label>
+                    <input type="text" id="prenom" name="prenom" required placeholder="Jean">
+                </div>
+
+                <div class="form-group">
+                    <label for="nom">Nom</label>
+                    <input type="text" id="nom" name="nom" required placeholder="Dupont">
+                </div>
+            </div>
+
             <div class="form-group">
                 <label for="email">Adresse email</label>
                 <input type="email" id="email" name="email" required placeholder="votre@email.com">
@@ -159,26 +231,47 @@
 
             <div class="form-group">
                 <label for="password">Mot de passe</label>
-                <input type="password" id="password" name="password" required placeholder="••••••••">
+                <input type="password" id="password" name="password" required placeholder="••••••••" minlength="8">
+                <p class="password-hint">Minimum 8 caractères</p>
             </div>
 
-            <button type="submit" class="btn">Se connecter</button>
+            <div class="form-group">
+                <label>Je suis</label>
+                <div class="role-selector">
+                    <div class="role-option">
+                        <input type="radio" id="role_user" name="role" value="USER" checked>
+                        <label for="role_user">
+                            <div class="icon">🚗</div>
+                            <div class="text">Conducteur</div>
+                        </label>
+                    </div>
+                    <div class="role-option">
+                        <input type="radio" id="role_owner" name="role" value="OWNER">
+                        <label for="role_owner">
+                            <div class="icon">🅿️</div>
+                            <div class="text">Propriétaire</div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn">Créer mon compte</button>
         </form>
 
         <div class="links">
-            <a href="/register">Pas encore de compte ? Inscrivez-vous</a>
+            <a href="/login">Déjà un compte ? Connectez-vous</a>
         </div>
     </div>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const messageDiv = document.getElementById('message');
             const formData = new FormData(this);
             
             try {
-                const response = await fetch('/api/login', {
+                const response = await fetch('/api/register', {
                     method: 'POST',
                     body: formData
                 });
@@ -187,16 +280,12 @@
                 
                 if (data.success) {
                     messageDiv.className = 'message success';
-                    messageDiv.textContent = 'Connexion réussie ! Redirection...';
+                    messageDiv.textContent = 'Inscription réussie ! Redirection vers la connexion...';
                     messageDiv.style.display = 'block';
                     
-                    // Stocker le token
-                    localStorage.setItem('token', data.data.token);
-                    
-                    // Rediriger vers l'accueil
                     setTimeout(() => {
-                        window.location.href = '/';
-                    }, 1000);
+                        window.location.href = '/login';
+                    }, 1500);
                 } else {
                     messageDiv.className = 'message error';
                     messageDiv.textContent = data.message;
