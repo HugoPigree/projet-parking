@@ -5,15 +5,15 @@ namespace App\UseCase\User;
 use App\Domain\Entity\User;
 use App\Domain\Repository\UserRepositoryInterface;
 use App\Domain\Service\PasswordHasherInterface;
+use App\Domain\Service\JwtServiceInterface;
 use App\Domain\ValueObject\Email;
-use App\Infrastructure\Security\JwtService;
 
 class LoginUser
 {
     public function __construct(
         private UserRepositoryInterface $userRepository,
         private PasswordHasherInterface $passwordHasher,
-        private JwtService $jwtService
+        private JwtServiceInterface $jwtService
     ) {
     }
 

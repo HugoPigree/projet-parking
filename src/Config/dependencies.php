@@ -4,6 +4,7 @@ namespace App\Config;
 
 use App\Domain\Repository\UserRepositoryInterface;
 use App\Domain\Service\PasswordHasherInterface;
+use App\Domain\Service\JwtServiceInterface;
 use App\Infrastructure\InMemory\InMemoryUserRepository;
 use App\Infrastructure\SQL\PDOUserRepository;
 use App\Infrastructure\Security\PasswordHasher;
@@ -16,15 +17,17 @@ use App\Interface\AuthMiddleware;
 class Dependencies
 {
     private static ?array $container = null;
-    private static string $storageType = 'memory'; // 'memory' ou 'sql'
+    private static string $storageType = 'sql'; // 'memory' (tests) ou 'sql' (production)
 
     /**
      * Configure le type de stockage
+     * 'memory' : InMemory (pour les tests unitaires uniquement)
+     * 'sql' : PDO/SQL (pour la production, par défaut)
      */
     public static function setStorageType(string $type): void
     {
         if (!in_array($type, ['memory', 'sql'])) {
-            throw new \InvalidArgumentException("Type de stockage invalide: $type");
+            throw new \InvalidArgumentException("Type de stockage invalide: $type. Utilisez 'memory' (tests) ou 'sql' (production)");
         }
         self::$storageType = $type;
         self::$container = null; // Réinitialiser le container
@@ -116,6 +119,7 @@ class Dependencies
             PasswordHasherInterface::class => $passwordHasher,
             PasswordHasher::class => $passwordHasher,
             'jwtService' => $jwtService,
+            JwtServiceInterface::class => $jwtService,
             JwtService::class => $jwtService,
 
             // Use Cases
@@ -137,11 +141,22 @@ class Dependencies
     /**
      * Crée le repository utilisateur selon le type de stockage
      */
+    /**
+     * Crée le repository utilisateur selon le type de stockage
+     * Conforme au plan : InMemory pour les tests, SQL pour la production
+     */
     private static function createUserRepository(): UserRepositoryInterface
     {
-        return match (self::$storageType) {
-            'sql' => new PDOUserRepository(),
-            default => new InMemoryUserRepository(),
-        };
+        static $repository = null;
+        
+        if ($repository === null) {
+            $repository = match (self::$storageType) {
+                'memory' => new InMemoryUserRepository(), // Pour les tests unitaires
+                'sql' => new PDOUserRepository(),         // Pour la production (par défaut)
+                default => new PDOUserRepository(),       // SQL par défaut
+            };
+        }
+        
+        return $repository;
     }
 }

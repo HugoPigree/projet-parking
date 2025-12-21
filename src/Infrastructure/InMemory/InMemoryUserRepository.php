@@ -9,17 +9,17 @@ use App\Domain\Enum\UserRole;
 
 class InMemoryUserRepository implements UserRepositoryInterface
 {
-    private array $users = [];
-    private int $nextId = 1;
+    private static array $users = [];
+    private static int $nextId = 1;
 
     public function findById(int $id): ?User
     {
-        return $this->users[$id] ?? null;
+        return self::$users[$id] ?? null;
     }
 
     public function findByEmail(Email $email): ?User
     {
-        foreach ($this->users as $user) {
+        foreach (self::$users as $user) {
             if ($user->getEmail() === $email->getValue()) {
                 return $user;
             }
@@ -30,25 +30,34 @@ class InMemoryUserRepository implements UserRepositoryInterface
     public function save(User $user): void
     {
         if ($user->getId() === null) {
-            $user->assignId($this->nextId++);
+            $user->assignId(self::$nextId++);
         }
-        $this->users[$user->getId()] = $user;
+        self::$users[$user->getId()] = $user;
     }
 
     public function delete(int $id): void
     {
-        unset($this->users[$id]);
+        unset(self::$users[$id]);
     }
 
     public function findAll(): array
     {
-        return array_values($this->users);
+        return array_values(self::$users);
     }
 
     public function findByRole(UserRole $role): array
     {
         return array_values(
-            array_filter($this->users, fn(User $user) => $user->getRole() === $role)
+            array_filter(self::$users, fn(User $user) => $user->getRole() === $role)
         );
+    }
+    
+    /**
+     * Réinitialise le repository (utile pour les tests)
+     */
+    public static function reset(): void
+    {
+        self::$users = [];
+        self::$nextId = 1;
     }
 }

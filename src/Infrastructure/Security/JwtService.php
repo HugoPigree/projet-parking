@@ -2,10 +2,11 @@
 
 namespace App\Infrastructure\Security;
 
+use App\Domain\Service\JwtServiceInterface;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
-class JwtService
+class JwtService implements JwtServiceInterface
 {
     private const ALGORITHM = 'HS256';
 
