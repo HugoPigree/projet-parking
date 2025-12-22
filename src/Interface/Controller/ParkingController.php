@@ -7,7 +7,7 @@ use App\UseCase\Parking\UpdateParking;
 use App\UseCase\Parking\SearchAvailableParkings;
 use App\UseCase\Parking\GetParkingAvailability;
 use App\UseCase\Parking\GetParkingRevenue;
-use App\Infrastructure\Repository\ParkingRepositoryInterface;
+use App\Domain\Repository\ParkingRepositoryInterface;
 
 /**
  * Controller pour la gestion des parkings

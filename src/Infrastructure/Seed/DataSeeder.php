@@ -3,7 +3,7 @@
 namespace App\Infrastructure\Seed;
 
 use App\Domain\Entity\Parking;
-use App\Infrastructure\Repository\ParkingRepositoryInterface;
+use App\Domain\Repository\ParkingRepositoryInterface;
 
 /**
  * Seeder pour créer des données de test

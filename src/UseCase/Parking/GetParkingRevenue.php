@@ -2,7 +2,7 @@
 
 namespace App\UseCase\Parking;
 
-use App\Infrastructure\Repository\ParkingRepositoryInterface;
+use App\Domain\Repository\ParkingRepositoryInterface;
 
 /**
  * Use Case : Obtenir le chiffre d'affaire mensuel d'un parking

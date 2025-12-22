@@ -3,7 +3,7 @@
 namespace App\UseCase\Parking;
 
 use App\Domain\Entity\Parking;
-use App\Infrastructure\Repository\ParkingRepositoryInterface;
+use App\Domain\Repository\ParkingRepositoryInterface;
 
 /**
  * Use Case : Mettre à jour un parking existant

@@ -3,7 +3,7 @@
 namespace App\UseCase\Parking;
 
 use App\Domain\Service\AvailabilityService;
-use App\Infrastructure\Repository\ParkingRepositoryInterface;
+use App\Domain\Repository\ParkingRepositoryInterface;
 
 /**
  * Use Case : Obtenir le nombre de places disponibles dans un parking à une date précise

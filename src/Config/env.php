@@ -1,14 +1,4 @@
 <?php
-<<<<<<< HEAD
-/**
- * Configuration simple de l'application.
- * Vous pouvez étendre ce tableau plus tard (clé JWT, mode debug, etc.).
- */
-return [
-    'APP_NAME' => 'Parking Partage',
-    'STORAGE_MODE' => 'memory', // 'memory', 'mysql', 'file' (pour évolution future)
-];
-=======
 
 /**
  * Configuration de l'application
@@ -31,6 +21,8 @@ if (file_exists($envFile)) {
 }
 
 return [
+    'APP_NAME' => $_ENV['APP_NAME'] ?? 'Parking Partage',
+    'STORAGE_MODE' => $_ENV['STORAGE_MODE'] ?? 'memory', // 'memory', 'mysql', 'file'
     'database' => [
         'host' => $_ENV['DB_HOST'] ?? 'localhost',
         'name' => $_ENV['DB_NAME'] ?? 'parking_partage',
@@ -42,5 +34,3 @@ return [
         'expiration' => (int) ($_ENV['JWT_EXPIRATION'] ?? 3600),
     ],
 ];
-
->>>>>>> origin/feat/subscription-session

@@ -4,7 +4,7 @@ namespace App\UseCase\Parking;
 
 use App\Domain\Entity\Parking;
 use App\Domain\Service\AvailabilityService;
-use App\Infrastructure\Repository\ParkingRepositoryInterface;
+use App\Domain\Repository\ParkingRepositoryInterface;
 
 /**
  * Use Case : Rechercher des parkings disponibles autour d'une coordonnée GPS

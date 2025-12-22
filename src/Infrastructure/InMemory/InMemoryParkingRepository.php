@@ -3,7 +3,7 @@
 namespace App\Infrastructure\InMemory;
 
 use App\Domain\Entity\Parking;
-use App\Infrastructure\Repository\ParkingRepositoryInterface;
+use App\Domain\Repository\ParkingRepositoryInterface;
 
 /**
  * Implémentation InMemory du repository de parkings

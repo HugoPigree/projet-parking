@@ -1,116 +1,22 @@
 <?php
-<<<<<<< HEAD
-/**
- * Mini routeur MVC très simple basé sur un paramètre GET 'route'.
- * L'objectif est pédagogique, pas production ready.
- *
- * Ici, on est censé instancier les contrôleurs avec leurs dépendances
- * (repositories in-memory + use cases) avant de  router.
- */
-
-use App\Infrastructure\Repository\PDOInvoiceRepository;
-use App\Infrastructure\Repository\PDOParkingRepository;
-use App\Infrastructure\Repository\PDOReservationRepository;
-
-use App\Domain\Service\PricingService;
-use App\Domain\Service\AvailabilityService;
-use App\Infrastructure\InMemory\InMemoryUserRepository;
-use App\UseCase\User\LoginUser;
-use App\UseCase\Parking\SearchAvailableParkings;
-use App\UseCase\Reservation\CreateReservation;
-use App\UseCase\Reservation\ListUserReservations;
-
-use App\Interface\Controller\HomeController;
-use App\Interface\Controller\AuthController;
-use App\Interface\Controller\ReservationController;
-
-// --- Dépendances techniques (InMemory) ---
-$userRepo = new InMemoryUserRepository();
-$parkingRepo = new PDOParkingRepository();
-$resRepo = new PDOReservationRepository();
-$invoiceRepository= new PDOInvoiceRepository() ;
-// --- Services métier ---
-$pricingService = new PricingService();
-$availabilityService = new AvailabilityService();
-
-// --- Use cases ---
-$loginUserUC = new LoginUser($userRepo);
-$searchParkingsUC = new SearchAvailableParkings($parkingRepo);
-$listReservationsUC = new ListUserReservations($resRepo);
-$createReservationUC = new CreateReservation(
-    $resRepo,
-   $invoiceRepository
-);
-
-// --- Contrôleurs MVC ---
-$homeController = new HomeController($searchParkingsUC);
-$authController = new AuthController($loginUserUC);
-//$resController = new ReservationController($listReservationsUC, $createReservationUC,$cancelReservationUc,$getReservationUc,$deleteReservationUc);
-
-// --- Routing ---
-$route = $_GET['route'] ?? 'home';
-
-switch ($route) {
-    case 'home':
-        $homeController->index();
-        break;
-    case 'login':
-        $authController->loginForm();
-        break;
-    case 'loginSubmit':
-        $authController->loginSubmit();
-        break;
-    case 'reservations':
-        // TODO: userId réel (session plus tard )
-        $resController->listForUser('USER_ID_TODO');
-        break;
-    case 'reservationForm':
-        $resController->createForm();
-        break;
-    case 'createReservationSubmit':
-        $resController->createSubmit();
-        break;
-    case 'reservation.show':
-    $resController->show($_GET['id']);
-    break;
-
-case 'reservation.createForm':
-    $resController->createForm();
-    break;
-
-case 'reservation.createSubmit':
-    $resController->createSubmit();
-    break;
-
-case 'reservation.cancel':
-    $resController->cancel($_GET['id'], 'USER_ID_TODO');
-    break;
-
-case 'reservation.delete':
-    $resController->delete($_GET['id']);
-    break;
-
-case 'reservations':
-    $resController->listForUser('USER_ID_TODO');
-    break;
-
-    default:
-        http_response_code(404);
-        echo "404 Not Found";
-}
-=======
 
 /**
  * Routes de l'application
- * Système de routing simple pour tester l'authentification
+ * Système de routing utilisant le container de dépendances
  */
 
 use App\Config\Dependencies;
 
+// Charger le container de dépendances
+$deps = Dependencies::getContainer();
+
 return [
-    // Routes GET (affichage de formulaires)
+    // Routes GET (affichage de formulaires et pages)
     'GET' => [
         '/' => function() {
+            require __DIR__ . '/View/home.php';
+        },
+        '/home' => function() {
             require __DIR__ . '/View/home.php';
         },
         '/login' => function() {
@@ -119,9 +25,25 @@ return [
         '/register' => function() {
             Dependencies::get('authController')->showRegisterForm();
         },
+        '/parkings/search' => function() {
+            // TODO: Implémenter avec ParkingController
+            require __DIR__ . '/View/parking_search.php';
+        },
+        '/parkings/create' => function() {
+            // TODO: Implémenter avec ParkingController
+            require __DIR__ . '/View/parking_form.php';
+        },
+        '/reservations' => function() {
+            // TODO: Implémenter avec ReservationController
+            require __DIR__ . '/View/reservations.php';
+        },
+        '/reservations/create' => function() {
+            // TODO: Implémenter avec ReservationController
+            require __DIR__ . '/View/reservation_form.php';
+        },
     ],
     
-    // Routes POST (traitement des formulaires)
+    // Routes POST (traitement des formulaires et API)
     'POST' => [
         '/api/login' => function() {
             Dependencies::get('authController')->login();
@@ -134,6 +56,21 @@ return [
         },
         '/api/me' => function() {
             Dependencies::get('authController')->getCurrentUser();
+        },
+        '/api/parkings/search' => function() {
+            // TODO: Implémenter avec ParkingController
+            header('Content-Type: application/json');
+            echo json_encode(['message' => 'Not implemented yet']);
+        },
+        '/api/parkings/create' => function() {
+            // TODO: Implémenter avec ParkingController
+            header('Content-Type: application/json');
+            echo json_encode(['message' => 'Not implemented yet']);
+        },
+        '/api/reservations/create' => function() {
+            // TODO: Implémenter avec ReservationController
+            header('Content-Type: application/json');
+            echo json_encode(['message' => 'Not implemented yet']);
         },
         '/api/debug/users' => function() {
             $repo = Dependencies::get('userRepository');
@@ -153,6 +90,3 @@ return [
         },
     ],
 ];
-
-
->>>>>>> origin/feat/subscription-session

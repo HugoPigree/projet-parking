@@ -3,7 +3,7 @@
 namespace App\Infrastructure\SQL;
 
 use App\Domain\Entity\Parking;
-use App\Infrastructure\Repository\ParkingRepositoryInterface;
+use App\Domain\Repository\ParkingRepositoryInterface;
 use PDO;
 
 /**
