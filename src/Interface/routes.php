@@ -2,15 +2,21 @@
 
 /**
  * Routes de l'application
- * Système de routing simple pour tester l'authentification
+ * Système de routing utilisant le container de dépendances
  */
 
 use App\Config\Dependencies;
 
+// Charger le container de dépendances
+$deps = Dependencies::getContainer();
+
 return [
-    // Routes GET (affichage de formulaires)
+    // Routes GET (affichage de formulaires et pages)
     'GET' => [
         '/' => function() {
+            require __DIR__ . '/View/home.php';
+        },
+        '/home' => function() {
             require __DIR__ . '/View/home.php';
         },
         '/login' => function() {
@@ -19,9 +25,25 @@ return [
         '/register' => function() {
             Dependencies::get('authController')->showRegisterForm();
         },
+        '/parkings/search' => function() {
+            // TODO: Implémenter avec ParkingController
+            require __DIR__ . '/View/parking_search.php';
+        },
+        '/parkings/create' => function() {
+            // TODO: Implémenter avec ParkingController
+            require __DIR__ . '/View/parking_form.php';
+        },
+        '/reservations' => function() {
+            // TODO: Implémenter avec ReservationController
+            require __DIR__ . '/View/reservations.php';
+        },
+        '/reservations/create' => function() {
+            // TODO: Implémenter avec ReservationController
+            require __DIR__ . '/View/reservation_form.php';
+        },
     ],
     
-    // Routes POST (traitement des formulaires)
+    // Routes POST (traitement des formulaires et API)
     'POST' => [
         '/api/login' => function() {
             Dependencies::get('authController')->login();
@@ -34,6 +56,21 @@ return [
         },
         '/api/me' => function() {
             Dependencies::get('authController')->getCurrentUser();
+        },
+        '/api/parkings/search' => function() {
+            // TODO: Implémenter avec ParkingController
+            header('Content-Type: application/json');
+            echo json_encode(['message' => 'Not implemented yet']);
+        },
+        '/api/parkings/create' => function() {
+            // TODO: Implémenter avec ParkingController
+            header('Content-Type: application/json');
+            echo json_encode(['message' => 'Not implemented yet']);
+        },
+        '/api/reservations/create' => function() {
+            // TODO: Implémenter avec ReservationController
+            header('Content-Type: application/json');
+            echo json_encode(['message' => 'Not implemented yet']);
         },
         '/api/debug/users' => function() {
             $repo = Dependencies::get('userRepository');
@@ -53,5 +90,3 @@ return [
         },
     ],
 ];
-
-
