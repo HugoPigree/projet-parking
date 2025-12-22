@@ -425,9 +425,9 @@ docker-compose exec app composer install --no-cache
 
 ---
 
-## 📞 Support
+## Team
 
-Pour toute question, consultez :
-- La documentation dans `/docs`
-- Les issues GitHub
-- Le plan de développement dans `PLAN_DEVELOPPEMENT.md`
+- Baboye Drame
+- Hugo Pigree
+- Charles Grossin
+- Louis Dondey
