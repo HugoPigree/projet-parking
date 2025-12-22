@@ -6,8 +6,6 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use App\Config\Dependencies;
-
 // Charger les routes
 $routes = require __DIR__ . '/../src/Interface/routes.php';
 
@@ -35,5 +33,3 @@ if (isset($routes[$method][$uri])) {
         'method' => $method,
     ], JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
 }
-
-

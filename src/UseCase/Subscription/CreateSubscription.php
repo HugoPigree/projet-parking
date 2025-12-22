@@ -5,7 +5,7 @@ namespace App\UseCase\Subscription;
 use App\Domain\Entity\Subscription;
 use App\Infrastructure\Repository\SubscriptionRepositoryInterface;
 use App\Infrastructure\Repository\UserRepositoryInterface;
-use App\Infrastructure\Repository\ParkingRepositoryInterface;
+use App\Domain\Repository\ParkingRepositoryInterface;
 use DateTime;
 
 class CreateSubscription

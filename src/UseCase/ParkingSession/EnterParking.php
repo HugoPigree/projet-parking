@@ -5,7 +5,7 @@ namespace App\UseCase\ParkingSession;
 use App\Domain\Entity\ParkingSession;
 use App\Infrastructure\Repository\ParkingSessionRepositoryInterface;
 use App\Infrastructure\Repository\UserRepositoryInterface;
-use App\Infrastructure\Repository\ParkingRepositoryInterface;
+use App\Domain\Repository\ParkingRepositoryInterface;
 use App\Infrastructure\Repository\ReservationRepositoryInterface;
 use App\Infrastructure\Repository\SubscriptionRepositoryInterface;
 use App\Domain\Service\AvailabilityService;
