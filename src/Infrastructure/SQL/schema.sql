@@ -49,20 +49,25 @@ CREATE TABLE IF NOT EXISTS parkings (
 -- ============================================
 CREATE TABLE IF NOT EXISTS reservations (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    uuid VARCHAR(255) NOT NULL UNIQUE,
     user_id INT NOT NULL,
     parking_id INT NOT NULL,
+    slot_id INT NOT NULL,
     start_time DATETIME NOT NULL,
     end_time DATETIME NOT NULL,
+    actual_start_time DATETIME DEFAULT NULL,
+    actual_end_time DATETIME DEFAULT NULL,
     price DECIMAL(10, 2) DEFAULT 0.00,
-    status ENUM('PENDING', 'ACTIVE', 'COMPLETED', 'CANCELLED') DEFAULT 'PENDING',
+    status ENUM('PENDING', 'CONFIRMED', 'ACTIVE', 'COMPLETED', 'CANCELED') DEFAULT 'PENDING',
     penalty DECIMAL(10, 2) DEFAULT 0.00,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    
+
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (parking_id) REFERENCES parkings(id) ON DELETE CASCADE,
     INDEX idx_user (user_id),
     INDEX idx_parking (parking_id),
+    INDEX idx_uuid (uuid),
     INDEX idx_times (start_time, end_time)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

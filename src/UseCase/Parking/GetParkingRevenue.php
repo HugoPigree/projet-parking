@@ -3,10 +3,12 @@
 namespace App\UseCase\Parking;
 
 use App\Domain\Repository\ParkingRepositoryInterface;
+use App\Domain\Repository\ReservationRepositoryInterface;
+use App\Infrastructure\Repository\SubscriptionRepositoryInterface;
 
 /**
  * Use Case : Obtenir le chiffre d'affaire mensuel d'un parking
- * 
+ *
  * Le chiffre d'affaire comprend :
  * - Toutes les réservations terminées du mois
  * - Tous les abonnements actifs du mois
@@ -14,13 +16,17 @@ use App\Domain\Repository\ParkingRepositoryInterface;
 class GetParkingRevenue
 {
     private ParkingRepositoryInterface $parkingRepository;
-    // TODO: Ajouter ReservationRepositoryInterface et SubscriptionRepositoryInterface
-    // private ReservationRepositoryInterface $reservationRepository;
-    // private SubscriptionRepositoryInterface $subscriptionRepository;
+    private ReservationRepositoryInterface $reservationRepository;
+    private SubscriptionRepositoryInterface $subscriptionRepository;
 
-    public function __construct(ParkingRepositoryInterface $parkingRepository)
-    {
+    public function __construct(
+        ParkingRepositoryInterface $parkingRepository,
+        ReservationRepositoryInterface $reservationRepository,
+        SubscriptionRepositoryInterface $subscriptionRepository
+    ) {
         $this->parkingRepository = $parkingRepository;
+        $this->reservationRepository = $reservationRepository;
+        $this->subscriptionRepository = $subscriptionRepository;
     }
 
     /**
@@ -49,11 +55,40 @@ class GetParkingRevenue
         $startDate = new \DateTime("$year-$month-01 00:00:00");
         $endDate = new \DateTime($startDate->format('Y-m-t') . ' 23:59:59');
 
-        // TODO: Récupérer les réservations terminées du mois
-        $reservationsRevenue = 0.0; // À implémenter avec ReservationRepository
-        
-        // TODO: Récupérer les abonnements actifs du mois
-        $subscriptionsRevenue = 0.0; // À implémenter avec SubscriptionRepository
+        // Récupérer toutes les réservations du parking
+        $allReservations = $this->reservationRepository->findByParking($parkingId);
+
+        // Calculer le revenu des réservations terminées dans le mois
+        $reservationsRevenue = 0.0;
+        $reservationCount = 0;
+        foreach ($allReservations as $reservation) {
+            // Compter uniquement les réservations terminées (COMPLETED) dont la fin est dans le mois
+            if ($reservation->getStatus() === 'COMPLETED') {
+                $endTime = $reservation->getActualEndTime() ?? $reservation->getEndTime();
+                if ($endTime >= $startDate && $endTime <= $endDate) {
+                    $reservationsRevenue += $reservation->getTotalPrice() + $reservation->getPenalty();
+                    $reservationCount++;
+                }
+            }
+        }
+
+        // Récupérer tous les abonnements du parking
+        $allSubscriptions = $this->subscriptionRepository->findByParkingId((string)$parkingId);
+
+        // Calculer le revenu des abonnements actifs dans le mois
+        // Note: Pour simplifier, on compte un abonnement s'il est actif durant le mois
+        // Dans un vrai système, il faudrait un prix d'abonnement dans l'entité Subscription
+        $subscriptionsRevenue = 0.0;
+        $subscriptionCount = 0;
+        foreach ($allSubscriptions as $subscription) {
+            // Vérifier si l'abonnement est actif durant le mois
+            if ($subscription->getStartDate() <= $endDate && $subscription->getEndDate() >= $startDate) {
+                // Prix fictif d'abonnement (à remplacer par le vrai prix de l'abonnement)
+                // Dans un système réel, Subscription devrait avoir un attribut price
+                $subscriptionsRevenue += 50.0; // Prix fictif
+                $subscriptionCount++;
+            }
+        }
 
         $totalRevenue = $reservationsRevenue + $subscriptionsRevenue;
 
@@ -64,7 +99,9 @@ class GetParkingRevenue
             'startDate' => $startDate->format('Y-m-d'),
             'endDate' => $endDate->format('Y-m-d'),
             'reservationsRevenue' => $reservationsRevenue,
+            'reservationCount' => $reservationCount,
             'subscriptionsRevenue' => $subscriptionsRevenue,
+            'subscriptionCount' => $subscriptionCount,
             'totalRevenue' => $totalRevenue
         ];
     }

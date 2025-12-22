@@ -1,0 +1,72 @@
+services:
+  # Service PHP Apache
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: parking_partage_app
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www/html
+      - ./storage:/var/www/html/storage
+    environment:
+      # Mode de stockage: 'sql' ou 'file' (pour tester Clean Architecture)
+      - STORAGE_MODE=${STORAGE_MODE:-sql}
+      - DB_HOST=mysql
+      - DB_NAME=parking_partage
+      - DB_USER=parking_user
+      - DB_PASSWORD=parking_password
+      - JWT_SECRET=${JWT_SECRET:-your-super-secret-jwt-key-change-in-production}
+      - JWT_EXPIRATION=3600
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - parking_network
+
+  # Service MySQL (pour mode SQL)
+  mysql:
+    image: mysql:8.0
+    container_name: parking_partage_mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: parking_partage
+      MYSQL_USER: parking_user
+      MYSQL_PASSWORD: parking_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./src/Infrastructure/SQL/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot_password"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - parking_network
+
+  # PHPMyAdmin (optionnel - pour visualiser la base)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: parking_partage_phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: parking_user
+      PMA_PASSWORD: parking_password
+      MYSQL_ROOT_PASSWORD: root_password
+    depends_on:
+      - mysql
+    networks:
+      - parking_network
+
+networks:
+  parking_network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local

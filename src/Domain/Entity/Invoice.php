@@ -11,6 +11,7 @@ class Invoice
     private int $userId;
 
     private float $subtotal = 0.0;
+    private float $penalty = 0.0;
     private float $taxRate = 0.0;
     private float $taxAmount = 0.0;
     private float $totalAmount = 0.0;
@@ -45,6 +46,12 @@ class Invoice
     public function getUserId(): int { return $this->userId; }
 
     public function getSubtotal(): float { return $this->subtotal; }
+    public function getPenalty(): float { return $this->penalty; }
+    public function setPenalty(float $penalty): void
+    {
+        $this->penalty = $penalty;
+        $this->recalculate();
+    }
     public function getTaxRate(): float { return $this->taxRate; }
     public function getTaxAmount(): float { return $this->taxAmount; }
     public function getTotalAmount(): float { return $this->totalAmount; }
@@ -77,10 +84,45 @@ class Invoice
         $this->status = $status;
     }
 
+    /**
+     * Ajoute une ligne à la facture
+     */
+    public function addItem(string $label, int $qty, float $unitPrice): void
+    {
+        $total = $qty * $unitPrice;
+
+        $this->items[] = [
+            'label' => $label,
+            'qty' => $qty,
+            'unit' => $unitPrice,
+            'total' => $total
+        ];
+
+        $this->recalculateFromItems();
+    }
+
+    /**
+     * Obtient le montant total (incluant pénalités si applicable)
+     */
+    public function getTotal(): float
+    {
+        return $this->totalAmount;
+    }
+
     private function recalculate(): void
     {
         $this->taxAmount = ($this->subtotal * $this->taxRate) / 100;
-        $this->totalAmount = $this->subtotal + $this->taxAmount;
+        // Total = Sous-total + Taxes + Pénalités
+        $this->totalAmount = $this->subtotal + $this->taxAmount + $this->penalty;
+    }
+
+    /**
+     * Recalcule le total à partir des items
+     */
+    private function recalculateFromItems(): void
+    {
+        $this->subtotal = array_sum(array_column($this->items, 'total'));
+        $this->recalculate();
     }
 
     public function toArray(): array

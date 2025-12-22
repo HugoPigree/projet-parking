@@ -19,6 +19,8 @@ class Reservation
     private ?DateTime $actualEndTime = null;
 
     private string $status = 'PENDING';
+    private float $totalPrice = 0.0;
+    private float $penalty = 0.0;
 
     private DateTime $createdAt;
     private DateTime $updatedAt;
@@ -59,6 +61,20 @@ class Reservation
 
     public function getStatus(): string { return $this->status; }
 
+    public function getTotalPrice(): float { return $this->totalPrice; }
+    public function setTotalPrice(float $price): void
+    {
+        $this->totalPrice = $price;
+        $this->touch();
+    }
+
+    public function getPenalty(): float { return $this->penalty; }
+    public function setPenalty(float $penalty): void
+    {
+        $this->penalty = $penalty;
+        $this->touch();
+    }
+
     public function setActualStart(DateTime $t): void
     {
         $this->actualStartTime = $t;
@@ -93,6 +109,33 @@ class Reservation
         $this->touch();
     }
 
+    /** Vérifie si la réservation est active (dans son créneau) */
+    public function isActive(): bool
+    {
+        $now = new DateTime();
+        return $now >= $this->startTime && $now <= $this->endTime && $this->status !== 'CANCELED';
+    }
+
+    /** Vérifie si la réservation est expirée (dépassement de fin) */
+    public function isExpired(): bool
+    {
+        $now = new DateTime();
+        return $now > $this->endTime;
+    }
+
+    /** Calcule le temps de dépassement en minutes */
+    public function calculateOvertime(?DateTime $actualEnd = null): int
+    {
+        $actualEndTime = $actualEnd ?? $this->actualEndTime ?? new DateTime();
+
+        if ($actualEndTime <= $this->endTime) {
+            return 0;
+        }
+
+        $overtimeSeconds = $actualEndTime->getTimestamp() - $this->endTime->getTimestamp();
+        return (int)ceil($overtimeSeconds / 60);
+    }
+
     private function touch(): void
     {
         $this->updatedAt = new DateTime();
@@ -114,6 +157,8 @@ class Reservation
             'actual_start_time' => $this->actualStartTime?->format('Y-m-d H:i:s'),
             'actual_end_time' => $this->actualEndTime?->format('Y-m-d H:i:s'),
             'status' => $this->status,
+            'total_price' => $this->totalPrice,
+            'penalty' => $this->penalty,
             'created_at' => $this->createdAt->format('Y-m-d H:i:s'),
             'updated_at' => $this->updatedAt->format('Y-m-d H:i:s'),
         ];

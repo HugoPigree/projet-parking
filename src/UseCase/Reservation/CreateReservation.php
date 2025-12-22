@@ -3,19 +3,19 @@ namespace App\UseCase\Reservation;
 
 use App\Domain\Entity\Reservation;
 use App\Domain\Entity\Invoice;
-use App\Infrastructure\Repository\PDOReservationRepository;
-use App\Infrastructure\Repository\PDOInvoiceRepository;
+use App\Domain\Repository\ReservationRepositoryInterface;
+use App\Domain\Repository\InvoiceRepositoryInterface;
 use DateTime;
 use Exception;
 
 class CreateReservation
 {
-    private PDOReservationRepository $reservationRepository;
-    private PDOInvoiceRepository $invoiceRepository;
+    private ReservationRepositoryInterface $reservationRepository;
+    private InvoiceRepositoryInterface $invoiceRepository;
 
     public function __construct(
-        PDOReservationRepository $reservationRepository,
-        PDOInvoiceRepository $invoiceRepository
+        ReservationRepositoryInterface $reservationRepository,
+        InvoiceRepositoryInterface $invoiceRepository
     ) {
         $this->reservationRepository = $reservationRepository;
         $this->invoiceRepository = $invoiceRepository;

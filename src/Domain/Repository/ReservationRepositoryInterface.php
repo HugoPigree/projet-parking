@@ -12,6 +12,8 @@ interface ReservationRepositoryInterface {
 
     public function findByUser(string $userId): array;
 
+    public function findByParking(int $parkingId): array;
+
     public function delete(string $id): void;
 
 }

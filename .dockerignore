@@ -1,0 +1,38 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Documentation
+*.md
+!README.md
+docs/
+RAPPORT_*.md
+PLAN_*.md
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+*~
+
+# Tests
+coverage/
+.phpunit.result.cache
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/

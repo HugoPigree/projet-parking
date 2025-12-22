@@ -13,11 +13,13 @@ class InMemoryReservationRepository implements ReservationRepositoryInterface {
 
     public function save(Reservation $reservation): void
     {
-        $this->reservations[$reservation->getId()] = $reservation;
+        // Use UUID as key for in-memory storage
+        $this->reservations[$reservation->getUuid()] = $reservation;
     }
 
    public function findById(string $id): ?Reservation
 {
+    // In-memory storage uses UUID as key
     return $this->reservations[$id] ?? null;
 }
 
@@ -25,6 +27,11 @@ class InMemoryReservationRepository implements ReservationRepositoryInterface {
     public function findByUser(string $userId): array
     {
         return array_filter($this->reservations, fn($r) => $r->getUserId() === $userId);
+    }
+
+    public function findByParking(int $parkingId): array
+    {
+        return array_filter($this->reservations, fn($r) => $r->getParkingId() === $parkingId);
     }
 
     public function delete(string $id): void
