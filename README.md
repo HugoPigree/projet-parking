@@ -10,11 +10,6 @@ Objectifs pédagogiques :
 - Use cases isolés
 - Repositories abstraits (interfaces) pour inversion de dépendance
 
-IMPORTANT :
-- Il n'y a volontairement PAS de code métier complet.
-- Il n'y a PAS de base de données branchée.
-- À vous d'implémenter la logique dans les classes existantes.
-
 ## Lancer en local (exemple futur)
 php -S localhost:8000 -t public
 
