@@ -1,29 +1,8 @@
-# Dependencies
 /vendor/
-composer.lock
-
-# Storage (données de développement)
-/storage/
-
-# Fichiers de configuration locaux
-.env
-.env.local
-
-# Documentation temporaire (à ne pas commiter)
-*.md
-!README.md
-
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Logs
+/.phpunit.result.cache
+/node_modules/
+/.env
+/.idea/
 *.log
+.DS_Store
 

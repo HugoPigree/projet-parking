@@ -48,7 +48,7 @@
 
 ---
 
-## Développeur 2 — Gestion Parkings
+## Développeur 2 — Gestion Parkings (Charles)
 
 ### Domain (`src/Domain/Entity/`)
 - ✅ **Parking.php** (à compléter)
